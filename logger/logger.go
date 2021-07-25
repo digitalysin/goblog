@@ -1,4 +1,4 @@
-package logs
+package logger
 
 import (
 	"github.com/sirupsen/logrus"
@@ -34,7 +34,12 @@ type (
 		Compress                    bool
 	}
 
-	logger struct {
+	lumberjackHook struct {
+		lbj    *lumberjack.Logger
+		logrus *logrus.Logger
+	}
+
+	impl struct {
 		instance *logrus.Logger
 	}
 )
@@ -48,59 +53,59 @@ const (
 	TextFormatter Formatter = "TEXT"
 )
 
-func (l *logger) Info(args ...interface{}) {
+func (l *impl) Info(args ...interface{}) {
 	l.instance.Info(args...)
 }
 
-func (l *logger) Infof(format string, args ...interface{}) {
+func (l *impl) Infof(format string, args ...interface{}) {
 	l.instance.Infof(format, args...)
 }
 
-func (l *logger) Debug(args ...interface{}) {
+func (l *impl) Debug(args ...interface{}) {
 	l.instance.Debug(args...)
 }
 
-func (l *logger) Debugf(format string, args ...interface{}) {
+func (l *impl) Debugf(format string, args ...interface{}) {
 	l.instance.Debugf(format, args...)
 }
 
-func (l *logger) Error(args ...interface{}) {
+func (l *impl) Error(args ...interface{}) {
 	l.instance.Error(args...)
 }
 
-func (l *logger) Errorf(format string, args ...interface{}) {
+func (l *impl) Errorf(format string, args ...interface{}) {
 	l.instance.Errorf(format, args...)
 }
 
-func (l *logger) Warning(args ...interface{}) {
+func (l *impl) Warning(args ...interface{}) {
 	l.instance.Warning(args...)
 }
 
-func (l *logger) Warningf(format string, args ...interface{}) {
+func (l *impl) Warningf(format string, args ...interface{}) {
 	l.instance.Warningf(format, args...)
 }
 
-func (l *logger) Fatal(args ...interface{}) {
+func (l *impl) Fatal(args ...interface{}) {
 	l.instance.Fatal(args...)
 }
 
-func (l *logger) Fatalf(format string, args ...interface{}) {
+func (l *impl) Fatalf(format string, args ...interface{}) {
 	l.instance.Fatalf(format, args...)
 }
 
-func (l *logger) Print(args ...interface{}) {
+func (l *impl) Print(args ...interface{}) {
 	l.instance.Print(args...)
 }
 
-func (l *logger) Println(args ...interface{}) {
+func (l *impl) Println(args ...interface{}) {
 	l.instance.Println(args...)
 }
 
-func (l *logger) Printf(format string, args ...interface{}) {
+func (l *impl) Printf(format string, args ...interface{}) {
 	l.instance.Printf(format, args...)
 }
 
-func (l *logger) Instance() interface{} {
+func (l *impl) Instance() interface{} {
 	return l.instance
 }
 func New(option *Option) (Logger, error) {
@@ -145,15 +150,8 @@ func New(option *Option) (Logger, error) {
 		})
 	}
 
-	return &logger{instance}, nil
+	return &impl{instance}, nil
 }
-
-type (
-	lumberjackHook struct {
-		lbj    *lumberjack.Logger
-		logrus *logrus.Logger
-	}
-)
 
 func (l *lumberjackHook) Levels() []logrus.Level {
 	return []logrus.Level{logrus.InfoLevel, logrus.DebugLevel, logrus.ErrorLevel}
