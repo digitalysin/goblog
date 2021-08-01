@@ -3,8 +3,10 @@ package db
 import (
 	"time"
 
+	glog "github.com/digitalysin/goblog/logger"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
 type (
@@ -32,6 +34,7 @@ type (
 		ConnectionString                     string
 		MaxLifeTimeConnection                time.Duration
 		MaxIdleConnection, MaxOpenConnection int
+		Logger                               glog.Logger
 	}
 )
 
@@ -115,7 +118,20 @@ func (d *mysqldb) Delete(model interface{}, args ...interface{}) error {
 }
 
 func NewMySql(option *MySqlOption) (ORM, error) {
-	db, err := gorm.Open(mysql.Open(option.ConnectionString), &gorm.Config{})
+	var (
+		opts = &gorm.Config{}
+	)
+
+	if option.Logger != nil {
+		opts.Logger = logger.New(option.Logger, logger.Config{
+			SlowThreshold:             time.Second,
+			LogLevel:                  logger.Info,
+			Colorful:                  false,
+			IgnoreRecordNotFoundError: false,
+		})
+	}
+
+	db, err := gorm.Open(mysql.Open(option.ConnectionString), opts)
 
 	if err != nil {
 		return nil, err
