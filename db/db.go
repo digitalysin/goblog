@@ -1,6 +1,7 @@
 package db
 
 import (
+	"context"
 	"time"
 
 	glog "github.com/digitalysin/goblog/logger"
@@ -23,6 +24,7 @@ type (
 		Create(args interface{}) error
 		Update(args interface{}) error
 		Delete(model interface{}, args ...interface{}) error
+		WithContext(ctx context.Context) ORM
 	}
 
 	mysqldb struct {
@@ -115,6 +117,13 @@ func (d *mysqldb) Update(args interface{}) error {
 
 func (d *mysqldb) Delete(model interface{}, args ...interface{}) error {
 	return d.db.Delete(model, args).Error
+}
+
+func (d *mysqldb) WithContext(ctx context.Context) ORM {
+	var (
+		db = d.db.WithContext(ctx)
+	)
+	return &mysqldb{db: db, err: nil}
 }
 
 func NewMySql(option *MySqlOption) (ORM, error) {
