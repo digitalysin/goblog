@@ -28,6 +28,9 @@ type (
 		Update(args interface{}) error
 		Delete(model interface{}, args ...interface{}) error
 		WithContext(ctx context.Context) ORM
+		Raw(query string, args ...interface{}) ORM
+		Exec(query string, args ...interface{}) ORM
+		Scan(object interface{}) error
 	}
 
 	mysqldb struct {
@@ -163,6 +166,32 @@ func (d *mysqldb) WithContext(ctx context.Context) ORM {
 		db = d.db.WithContext(ctx)
 	)
 	return &mysqldb{db: db, err: nil}
+}
+
+func (d *mysqldb) Raw(query string, args ...interface{}) ORM {
+	var (
+		db  = d.db.Raw(query, args)
+		err = db.Error
+	)
+
+	return &mysqldb{db, err}
+}
+
+func (d *mysqldb) Exec(query string, args ...interface{}) ORM {
+	var (
+		db  = d.db.Exec(query, args)
+		err = db.Error
+	)
+
+	return &mysqldb{db, err}
+}
+
+func (d *mysqldb) Scan(object interface{}) error {
+	var (
+		db = d.db.Scan(object)
+	)
+
+	return db.Error
 }
 
 func NewMySql(option *MySqlOption) (ORM, error) {
