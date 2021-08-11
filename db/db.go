@@ -20,6 +20,9 @@ type (
 		Rollback() error
 		Offset(offset int) ORM
 		Limit(limit int) ORM
+		First(object interface{}) error
+		Last(object interface{}) error
+		Find(object interface{}) error
 		Where(query interface{}, args ...interface{}) ORM
 		Create(args interface{}) error
 		Update(args interface{}) error
@@ -96,6 +99,42 @@ func (d *mysqldb) Limit(limit int) ORM {
 		err = d.db.Error
 	)
 	return &mysqldb{db, err}
+}
+
+func (d *mysqldb) First(object interface{}) error {
+	var (
+		res = d.db.First(object)
+	)
+
+	if res.Error != nil {
+		return res.Error
+	}
+
+	return nil
+}
+
+func (d *mysqldb) Last(object interface{}) error {
+	var (
+		res = d.db.Last(object)
+	)
+
+	if res.Error != nil {
+		return res.Error
+	}
+
+	return nil
+}
+
+func (d *mysqldb) Find(object interface{}) error {
+	var (
+		res = d.db.Find(object)
+	)
+
+	if res.Error != nil {
+		return res.Error
+	}
+
+	return nil
 }
 
 func (d *mysqldb) Where(query interface{}, args ...interface{}) ORM {
