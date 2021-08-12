@@ -31,6 +31,8 @@ type (
 		Raw(query string, args ...interface{}) ORM
 		Exec(query string, args ...interface{}) ORM
 		Scan(object interface{}) error
+		Preload(assoc string) ORM
+		Joins(assoc string) ORM
 	}
 
 	mysqldb struct {
@@ -192,6 +194,24 @@ func (d *mysqldb) Scan(object interface{}) error {
 	)
 
 	return db.Error
+}
+
+func (d *mysqldb) Preload(assoc string) ORM {
+	var (
+		db  = d.db.Preload(assoc)
+		err = db.Error
+	)
+
+	return &mysqldb{db, err}
+}
+
+func (d *mysqldb) Joins(assoc string) ORM {
+	var (
+		db  = d.db.Joins(assoc)
+		err = db.Error
+	)
+
+	return &mysqldb{db, err}
 }
 
 func NewMySql(option *MySqlOption) (ORM, error) {
