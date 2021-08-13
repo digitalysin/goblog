@@ -18,8 +18,8 @@ type (
 		Begin() ORM
 		Commit() error
 		Rollback() error
-		Offset(offset int) ORM
-		Limit(limit int) ORM
+		Offset(offset int64) ORM
+		Limit(limit int64) ORM
 		First(object interface{}) error
 		Last(object interface{}) error
 		Find(object interface{}) error
@@ -90,17 +90,17 @@ func (d *mysqldb) Rollback() error {
 	return d.db.Rollback().Error
 }
 
-func (d *mysqldb) Offset(offset int) ORM {
+func (d *mysqldb) Offset(offset int64) ORM {
 	var (
-		db  = d.db.Offset(offset)
+		db  = d.db.Offset(int(offset))
 		err = d.db.Error
 	)
 	return &mysqldb{db, err}
 }
 
-func (d *mysqldb) Limit(limit int) ORM {
+func (d *mysqldb) Limit(limit int64) ORM {
 	var (
-		db  = d.db.Limit(limit)
+		db  = d.db.Limit(int(limit))
 		err = d.db.Error
 	)
 	return &mysqldb{db, err}
@@ -144,7 +144,7 @@ func (d *mysqldb) Find(object interface{}) error {
 
 func (d *mysqldb) Where(query interface{}, args ...interface{}) ORM {
 	var (
-		db  = d.db.Where(query, args)
+		db  = d.db.Where(query, args...)
 		err = db.Error
 	)
 	return &mysqldb{db, err}
@@ -160,7 +160,7 @@ func (d *mysqldb) Update(args interface{}) error {
 }
 
 func (d *mysqldb) Delete(model interface{}, args ...interface{}) error {
-	return d.db.Delete(model, args).Error
+	return d.db.Delete(model, args...).Error
 }
 
 func (d *mysqldb) WithContext(ctx context.Context) ORM {
@@ -172,7 +172,7 @@ func (d *mysqldb) WithContext(ctx context.Context) ORM {
 
 func (d *mysqldb) Raw(query string, args ...interface{}) ORM {
 	var (
-		db  = d.db.Raw(query, args)
+		db  = d.db.Raw(query, args...)
 		err = db.Error
 	)
 
@@ -181,7 +181,7 @@ func (d *mysqldb) Raw(query string, args ...interface{}) ORM {
 
 func (d *mysqldb) Exec(query string, args ...interface{}) ORM {
 	var (
-		db  = d.db.Exec(query, args)
+		db  = d.db.Exec(query, args...)
 		err = db.Error
 	)
 
