@@ -3,157 +3,77 @@ package crypto
 import (
 	"crypto/aes"
 	"crypto/cipher"
+	"crypto/rand"
 	"encoding/hex"
-	"fmt"
-	"math/rand"
+	"errors"
+	"io"
 )
 
 type (
 	Crypto interface {
-		EncryptAes16(secret, text []byte) ([]byte, error)
-		DecryptAes16(secret, text []byte) ([]byte, error)
+		EncryptAes(text string) ([]byte, error)
+		DecryptAes(text string) ([]byte, error)
 	}
 
-	impl struct{}
+	impl struct {
+		secret []byte
+	}
 )
 
-func (c *impl) EncryptAes16(secret, text []byte) ([]byte, error) {
-	encKeyLen := len(secret)
-
-	if encKeyLen < 16 {
-		return nil, fmt.Errorf("The key must be 16 bytes long")
-	}
-
-	encKeySized := secret
-
-	if encKeyLen > 16 {
-		encKeySized = secret[:16]
-	}
-
-	cc, err := aes.NewCipher(encKeySized)
+func (i *impl) EncryptAes(text string) ([]byte, error) {
+	block, _ := aes.NewCipher(i.secret)
+	gcm, err := cipher.NewGCM(block)
 
 	if err != nil {
 		return nil, err
 	}
 
-	//----------- Create the IV
-	// remember that GCM normally takes a 12 byte (96 bit) nounce
-	nonceSize := 12
-	iv, err := nonce(nonceSize)
-
-	if err != nil {
+	nonce := make([]byte, gcm.NonceSize())
+	if _, err = io.ReadFull(rand.Reader, nonce); err != nil {
 		return nil, err
 	}
 
-	//----------- Encrypt
-	ivLen := len(iv)
-	enc, err := cipher.NewGCMWithNonceSize(cc, nonceSize)
-
-	if err != nil {
-		return nil, err
-	}
-
-	cipherText := enc.Seal(nil, iv, text, nil)
-
-	//----------- Pack the message
-	// create output tag
-	output := make([]byte, 1+ivLen+len(cipherText))
-
-	i := 0
-	output[i] = byte(ivLen)
-	i++
-
-	copycopy(iv, 0, output, i, ivLen)
-	i += ivLen
-
-	copycopy(cipherText, 0, output, i, len(cipherText))
-
-	return output, nil
+	ciphertext := gcm.Seal(nonce, nonce, []byte(text), nil)
+	return ciphertext, nil
 }
 
-func (c *impl) DecryptAes16(secret, text []byte) ([]byte, error) {
-	encKeyLen := len(secret)
-
-	if encKeyLen < 16 {
-		return nil, fmt.Errorf("The key must be 16 bytes long")
-	}
-
-	encKeySized := secret
-
-	if encKeyLen > 16 {
-		encKeySized = secret[:16]
-	}
-
-	//----------- Unpack the message
-
-	//----------- read the IV
-	i := 0
-	ivLen := int(text[i])
-	i++
-
-	if ivLen != 12 {
-		return nil, fmt.Errorf("IV length is not correct, expected 12 but got %d", ivLen)
-	}
-
-	iv := make([]byte, ivLen)
-	copycopy(text, i, iv, 0, ivLen)
-	i += ivLen
-
-	//----------- read the cipher text
-
-	cipherTextLen := len(text) - i
-	cipherText := make([]byte, cipherTextLen)
-
-	copycopy(text, i, cipherText, 0, cipherTextLen)
-
-	//----------- Decrypt
-
-	cc, err := aes.NewCipher(encKeySized)
+func (i *impl) DecryptAes(text string) ([]byte, error) {
+	data, err := hex.DecodeString(text)
 
 	if err != nil {
 		return nil, err
 	}
 
-	dec, err := cipher.NewGCMWithNonceSize(cc, ivLen)
+	block, err := aes.NewCipher(i.secret)
+
+	if err != nil {
+		return nil, err
+	}
+	gcm, err := cipher.NewGCM(block)
 
 	if err != nil {
 		return nil, err
 	}
 
-	output, err := dec.Open(nil, iv, cipherText, nil)
+	nonceSize := gcm.NonceSize()
+	nonce, ciphertext := data[:nonceSize], data[nonceSize:]
 
+	plaintext, err := gcm.Open(nil, nonce, ciphertext, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	return output, nil
-}
-
-// Create a single random initialised byte array of size.
-func nonce(size int) ([]byte, error) {
-
-	b := make([]byte, size)
-
-	// not checking len here because rand.Read doc reads:
-	//             On return, n == len(b) if and only if err == nil.
-	_, err := rand.Read(b)
-
-	if err != nil {
-		return nil, err
-	}
-
-	return b, nil
-}
-
-func copycopy(src []byte, srcI int, dest []byte, destI int, copyLen int) {
-	srcI2 := srcI + copyLen
-	copy(dest[destI:], src[srcI:srcI2])
+	return []byte(plaintext), nil
 }
 
 func ToString(src []byte) string {
 	return hex.EncodeToString(src)
 }
 
-func New() (Crypto, error) {
-	return &impl{}, nil
+func New(secret string) (Crypto, error) {
+	if len(secret) != 32 {
+		return nil, errors.New("secret must be 32 bytes long")
+	}
+
+	return &impl{[]byte(secret)}, nil
 }
