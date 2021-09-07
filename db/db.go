@@ -24,6 +24,7 @@ type (
 		Last(object interface{}) error
 		Find(object interface{}) error
 		Where(query interface{}, args ...interface{}) ORM
+		Order(value interface{}) ORM
 		Create(args interface{}) error
 		Update(args interface{}) error
 		Delete(model interface{}, args ...interface{}) error
@@ -147,6 +148,15 @@ func (d *mysqldb) Where(query interface{}, args ...interface{}) ORM {
 		db  = d.db.Where(query, args...)
 		err = db.Error
 	)
+	return &mysqldb{db, err}
+}
+
+func (d *mysqldb) Order(value interface{}) ORM {
+	var (
+		db  = d.db.Order(value)
+		err = d.db.Error
+	)
+
 	return &mysqldb{db, err}
 }
 
