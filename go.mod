@@ -7,6 +7,8 @@ require (
 	github.com/digitalysin/go-telnet v0.0.0-20210722113354-2aa34c9fb2d9
 	github.com/etix/stoppableListener v0.0.0-20131017134521-0346fe88acd7 // indirect
 	github.com/go-redis/redis/v8 v8.4.4
+	github.com/gojek/heimdall/v7 v7.0.2 // indirect
+	github.com/gojek/valkyrie v0.0.0-20190210220504-8f62c1e7ba45 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/jlaffaye/ftp v0.0.0-20210307004419-5d4190119067
 	github.com/joho/godotenv v1.3.0
@@ -16,8 +18,10 @@ require (
 	github.com/nats-io/nats-server/v2 v2.3.2 // indirect
 	github.com/nats-io/nats.go v1.11.1-0.20210623165838-4b75fc59ae30
 	github.com/sirupsen/logrus v1.8.1
+	github.com/stretchr/testify v1.7.0 // indirect
 	google.golang.org/protobuf v1.27.1 // indirect
 	gopkg.in/natefinch/lumberjack.v2 v2.0.0
+	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
 	gorm.io/driver/mysql v1.1.1
 	gorm.io/gorm v1.21.12
 )
