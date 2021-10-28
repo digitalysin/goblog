@@ -23,15 +23,23 @@ type (
 func (lc *localcache) Set(_ context.Context, key string, value []byte) error {
 	return lc.cache.Set(key, value)
 }
+
 func (lc *localcache) SetExp(_ context.Context, key string, value []byte, _ time.Duration) error {
 	return errors.New("SetExp not implemented for local mem cache")
 }
+
 func (lc *localcache) Get(_ context.Context, key string, object interface{}) error {
 	return errors.New("Get not implemented for local mem cache")
 }
+
 func (lc *localcache) GetBytes(_ context.Context, key string) ([]byte, error) {
 	return lc.cache.Get(key)
 }
+
+func (lc *localcache) Keys(_ context.Context, pattern string) ([]string, error) {
+	return nil, errors.New("Keys not implement for local mem cache")
+}
+
 func (lc *localcache) Close() error {
 	return lc.cache.Close()
 }
