@@ -47,6 +47,13 @@ type (
 		MaxIdleConnection, MaxOpenConnection int
 		Logger                               glog.Logger
 	}
+
+	SqlServerOption struct {
+		ConnectionString                     string
+		MaxLifeTimeConnection                time.Duration
+		MaxIdleConnection, MaxOpenConnection int
+		Logger                               glog.Logger
+	}
 )
 
 func (d *mysqldb) Set(key string, value interface{}) ORM {
