@@ -23,8 +23,6 @@ type (
 		First(object interface{}) error
 		Last(object interface{}) error
 		Find(object interface{}) error
-		Model(args interface{}) ORM
-		Select(args ...interface{}) ORM
 		Where(query interface{}, args ...interface{}) ORM
 		Order(value interface{}) ORM
 		Create(args interface{}) error
@@ -151,22 +149,6 @@ func (d *mysqldb) Find(object interface{}) error {
 	}
 
 	return nil
-}
-
-func (d *mysqldb) Model(args interface{}) ORM {
-	var (
-		db  = d.db.Model(args)
-		err = d.db.Error
-	)
-	return &mysqldb{db, err}
-}
-
-func (d *mysqldb) Select(args ...interface{}) ORM {
-	var (
-		db  = d.db.Select(args)
-		err = d.db.Error
-	)
-	return &mysqldb{db, err}
 }
 
 func (d *mysqldb) Where(query interface{}, args ...interface{}) ORM {
