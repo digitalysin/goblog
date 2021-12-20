@@ -27,6 +27,7 @@ type (
 		Order(value interface{}) ORM
 		Create(args interface{}) error
 		Update(args interface{}) error
+		UpdateColumns(model interface{}, args interface{}) error
 		Delete(model interface{}, args ...interface{}) error
 		WithContext(ctx context.Context) ORM
 		Raw(query string, args ...interface{}) ORM
@@ -173,7 +174,10 @@ func (d *mysqldb) Create(args interface{}) error {
 
 func (d *mysqldb) Update(args interface{}) error {
 	return d.db.Updates(args).Error
+}
 
+func (d *mysqldb) UpdateColumns(model interface{}, args interface{}) error {
+	return d.db.Model(model).UpdateColumns(args).Error
 }
 
 func (d *mysqldb) Delete(model interface{}, args ...interface{}) error {
