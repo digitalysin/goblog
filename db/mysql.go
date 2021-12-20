@@ -23,11 +23,13 @@ type (
 		First(object interface{}) error
 		Last(object interface{}) error
 		Find(object interface{}) error
+		Model(args interface{}) ORM
+		Select(args ...interface{}) ORM
 		Where(query interface{}, args ...interface{}) ORM
 		Order(value interface{}) ORM
 		Create(args interface{}) error
 		Update(args interface{}) error
-		UpdateColumns(model interface{}, args interface{}) error
+		UpdateColumns(args interface{}) error
 		Delete(model interface{}, args ...interface{}) error
 		WithContext(ctx context.Context) ORM
 		Raw(query string, args ...interface{}) ORM
@@ -151,6 +153,22 @@ func (d *mysqldb) Find(object interface{}) error {
 	return nil
 }
 
+func (d *mysqldb) Model(args interface{}) ORM {
+	var (
+		db  = d.db.Model(args)
+		err = d.db.Error
+	)
+	return &mysqldb{db, err}
+}
+
+func (d *mysqldb) Select(args ...interface{}) ORM {
+	var (
+		db  = d.db.Select(args)
+		err = d.db.Error
+	)
+	return &mysqldb{db, err}
+}
+
 func (d *mysqldb) Where(query interface{}, args ...interface{}) ORM {
 	var (
 		db  = d.db.Where(query, args...)
@@ -176,8 +194,8 @@ func (d *mysqldb) Update(args interface{}) error {
 	return d.db.Updates(args).Error
 }
 
-func (d *mysqldb) UpdateColumns(model interface{}, args interface{}) error {
-	return d.db.Model(model).UpdateColumns(args).Error
+func (d *mysqldb) UpdateColumns(args interface{}) error {
+	return d.db.UpdateColumns(args).Error
 }
 
 func (d *mysqldb) Delete(model interface{}, args ...interface{}) error {
