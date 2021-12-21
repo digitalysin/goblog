@@ -2,6 +2,7 @@ package db
 
 import (
 	"context"
+	"gorm.io/gorm/clause"
 	"time"
 
 	glog "github.com/digitalysin/goblog/logger"
@@ -25,6 +26,7 @@ type (
 		Find(object interface{}) error
 		Model(value interface{}) ORM
 		Select(query interface{}, args ...interface{}) ORM
+		OmitAssoc() ORM
 		Where(query interface{}, args ...interface{}) ORM
 		Order(value interface{}) ORM
 		Create(args interface{}) error
@@ -156,6 +158,15 @@ func (d *mysqldb) Find(object interface{}) error {
 func (d *mysqldb) Model(value interface{}) ORM {
 	var (
 		db  = d.db.Model(value)
+		err = db.Error
+	)
+
+	return &mysqldb{db, err}
+}
+
+func (d *mysqldb) OmitAssoc() ORM {
+	var (
+		db  = d.db.Omit(clause.Associations)
 		err = db.Error
 	)
 
