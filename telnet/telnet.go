@@ -11,6 +11,7 @@ import (
 type (
 	Telnet interface {
 		Run(input io.Reader, output io.Writer) error
+		Close() error
 	}
 
 	Option struct {
@@ -44,12 +45,24 @@ func (i *impl) Run(input io.Reader, output io.Writer) error {
 	return i.client.ProcessData(input, output)
 }
 
+func (i *impl) Close() error {
+	return i.client.Close()
+}
+
 func New(opts *Option) (Telnet, error) {
 	if opts.TelnetHost == "" {
 		return nil, errors.New("telnet host is required")
 	}
 
+	var (
+		tln, err = client.NewTelnetClient(opts)
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
 	return &impl{
-		client: client.NewTelnetClient(opts),
+		client: tln,
 	}, nil
 }

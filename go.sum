@@ -16,8 +16,8 @@ github.com/denisenkom/go-mssqldb v0.11.0 h1:9rHa233rhdOyrz2GcP9NM+gi2psgJZ4GWDpL
 github.com/denisenkom/go-mssqldb v0.11.0/go.mod h1:xbL0rPBG9cCiLr28tMa8zpbdarY27NDyej4t/EjAShU=
 github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f h1:lO4WD4F/rVNCu3HqELle0jiPLLBs70cWOduZpkS1E78=
 github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f/go.mod h1:cuUVRXasLTGF7a8hSLbxyZXjz+1KgoB3wDUb6vlszIc=
-github.com/digitalysin/go-telnet v0.0.0-20210722113354-2aa34c9fb2d9 h1:ZM/wir7Q5zWGiCKM8GOT+M7uso9zL39cqUiYsLtheFc=
-github.com/digitalysin/go-telnet v0.0.0-20210722113354-2aa34c9fb2d9/go.mod h1:6rxkO1c0YhrN76Zp+DQiJaY7rrkTujPSvyZamQUuhsM=
+github.com/digitalysin/go-telnet v0.0.2 h1:VS3scJQlF8KQPMTNCo3w0PSD1oOdKCFvTPnQ03qnsyg=
+github.com/digitalysin/go-telnet v0.0.2/go.mod h1:6rxkO1c0YhrN76Zp+DQiJaY7rrkTujPSvyZamQUuhsM=
 github.com/etix/stoppableListener v0.0.0-20131017134521-0346fe88acd7 h1:gFSw3JR+1JY9WbURyjftPV/LLz3a+AlrCxTMiEjBngo=
 github.com/etix/stoppableListener v0.0.0-20131017134521-0346fe88acd7/go.mod h1:dkMfp6ijiizWtXnu/KMGB6Tmpuve2eX/WS+i/XNLY6o=
 github.com/fsnotify/fsnotify v1.4.7/go.mod h1:jwhsz4b93w/PPRr/qN1Yymfu8t87LnFCMoQvtojpjFo=

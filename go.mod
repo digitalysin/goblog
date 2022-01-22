@@ -5,7 +5,7 @@ go 1.17
 require (
 	github.com/BurntSushi/toml v0.3.1 // indirect
 	github.com/allegro/bigcache/v3 v3.0.0
-	github.com/digitalysin/go-telnet v0.0.0-20210722113354-2aa34c9fb2d9
+	github.com/digitalysin/go-telnet v0.0.2
 	github.com/etix/stoppableListener v0.0.0-20131017134521-0346fe88acd7 // indirect
 	github.com/go-redis/redis/v8 v8.4.4
 	github.com/gojek/heimdall/v7 v7.0.2
