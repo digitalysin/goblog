@@ -40,6 +40,10 @@ func (lc *localcache) Keys(_ context.Context, pattern string) ([]string, error) 
 	return nil, errors.New("Keys not implement for local mem cache")
 }
 
+func (lc *localcache) Ping(_ context.Context) error {
+	return nil
+}
+
 func (lc *localcache) Close() error {
 	return lc.cache.Close()
 }

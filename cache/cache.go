@@ -14,6 +14,7 @@ type (
 		Get(ctx context.Context, key string, object interface{}) error
 		GetBytes(ctx context.Context, key string) ([]byte, error)
 		Keys(ctx context.Context, pattern string) ([]string, error)
+		Ping(ctx context.Context) error
 		Close() error
 	}
 
@@ -69,6 +70,10 @@ func (c *cch) Keys(ctx context.Context, pattern string) ([]string, error) {
 	)
 
 	return res.Result()
+}
+
+func (c *cch) Ping(ctx context.Context) error {
+	return c.cache.Ping(ctx).Err()
 }
 
 func (c *cch) Close() error {

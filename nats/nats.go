@@ -19,6 +19,7 @@ type (
 		Subscribe(subject string, callback gnats.MsgHandler) (*gnats.Subscription, error)
 		QueueSubscribe(subject, group string, callback gnats.MsgHandler) (*gnats.Subscription, error)
 		Flush() error
+		Ping() error
 		Close() error
 	}
 
@@ -41,6 +42,14 @@ func (i *impl) QueueSubscribe(subject, group string, callback gnats.MsgHandler) 
 
 func (i *impl) Flush() error {
 	return i.client.Flush()
+}
+
+func (i *impl) Ping() error {
+	if i.client.IsConnected() {
+		return nil
+	}
+
+	return gnats.ErrDisconnected
 }
 
 func (i *impl) Close() error {
