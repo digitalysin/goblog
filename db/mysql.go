@@ -39,6 +39,7 @@ type (
 		Scan(object interface{}) error
 		Preload(assoc string) ORM
 		Joins(assoc string) ORM
+		Ping() error
 	}
 
 	mysqldb struct {
@@ -264,6 +265,18 @@ func (d *mysqldb) Joins(assoc string) ORM {
 	)
 
 	return &mysqldb{db, err}
+}
+
+func (d *mysqldb) Ping() error {
+	var (
+		db, err = d.db.DB()
+	)
+
+	if err != nil {
+		return err
+	}
+
+	return db.Ping()
 }
 
 func NewMySql(option *MySqlOption) (ORM, error) {
