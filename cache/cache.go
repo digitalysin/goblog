@@ -71,7 +71,7 @@ func (c *cch) Incr(ctx context.Context, key string) error {
 }
 
 func (c *cch) Decr(ctx context.Context, key string) error {
-	return c.cache.Incr(ctx, key).Err()
+	return c.cache.Decr(ctx, key).Err()
 }
 
 func (c *cch) Keys(ctx context.Context, pattern string) ([]string, error) {
