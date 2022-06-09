@@ -13,6 +13,8 @@ type (
 		SetExp(ctx context.Context, key string, value []byte, exp time.Duration) error
 		Get(ctx context.Context, key string, object interface{}) error
 		GetBytes(ctx context.Context, key string) ([]byte, error)
+		Incr(ctx context.Context, key string) error
+		Decr(ctx context.Context, key string) error
 		Keys(ctx context.Context, pattern string) ([]string, error)
 		Ping(ctx context.Context) error
 		Close() error
@@ -62,6 +64,14 @@ func (c *cch) GetBytes(ctx context.Context, key string) ([]byte, error) {
 	}
 
 	return status.Bytes()
+}
+
+func (c *cch) Incr(ctx context.Context, key string) error {
+	return c.cache.Incr(ctx, key).Err()
+}
+
+func (c *cch) Decr(ctx context.Context, key string) error {
+	return c.cache.Incr(ctx, key).Err()
 }
 
 func (c *cch) Keys(ctx context.Context, pattern string) ([]string, error) {

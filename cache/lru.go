@@ -36,6 +36,14 @@ func (lc *localcache) GetBytes(_ context.Context, key string) ([]byte, error) {
 	return lc.cache.Get(key)
 }
 
+func (lc *localcache) Incr(_ context.Context, key string) error {
+	return errors.New("Incr not implemented for local mem cache")
+}
+
+func (lc *localcache) Decr(ctx context.Context, key string) error {
+	return errors.New("Decr not implemented for local mem cache")
+}
+
 func (lc *localcache) Keys(_ context.Context, pattern string) ([]string, error) {
 	return nil, errors.New("Keys not implement for local mem cache")
 }
