@@ -9,9 +9,10 @@ import (
 
 type (
 	Option struct {
-		Servers        []string
-		User, Password string
-		ConnectTimeout time.Duration
+		Servers             []string
+		User, Password      string
+		ConnectTimeout      time.Duration
+		SlowConsumerHandler func(conn *gnats.Conn, subscription *gnats.Subscription, err error)
 	}
 
 	Connection interface {
@@ -71,6 +72,10 @@ func New(opts *Option) (Connection, error) {
 
 	if err != nil {
 		return nil, err
+	}
+
+	if opts.SlowConsumerHandler != nil {
+		client.SetErrorHandler(opts.SlowConsumerHandler)
 	}
 
 	return &impl{client}, nil
