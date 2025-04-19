@@ -2,42 +2,48 @@ package nosql
 
 import (
 	"context"
+	"go.mongodb.org/mongo-driver/v2/bson"
 
 	"github.com/pkg/errors"
 	"go.mongodb.org/mongo-driver/v2/mongo"
 )
 
 type (
-	Entity interface {
+	Entity[ID any | bson.ObjectID] interface {
 		CollectionName() string
+		GetID() ID
 	}
 
-	Repository[E Entity, T ~[]E] interface {
+	Repository[ID any, E Entity[ID], T ~[]E] interface {
 		FindOne(ctx context.Context, filter interface{}) (E, error)
 		FindMany(ctx context.Context, filter interface{}) (T, error)
+		Create(ctx context.Context, entity E) (E, error)
+		Update(ctx context.Context, e E, update interface{}) (E, error)
+		Delete(ctx context.Context, e E) (T, error)
+		DeleteMany(ctx context.Context, filter interface{}) (T, error)
 	}
 
-	MongoRepository[E Entity, T ~[]E] interface {
-		Repository[E, T]
+	MongoRepository[ID, E Entity[ID], T ~[]E] interface {
+		Repository[ID, E, T]
 		GetClient() *mongo.Client
 		GetDatabase() string
 	}
 
-	AbstractMongoCrudRepository[E Entity, T ~[]E] struct {
+	AbstractMongoCrudRepository[ID any | bson.ObjectID, E Entity[ID], T ~[]E] struct {
 		Client   *mongo.Client
 		Database string
 	}
 )
 
-func (impl *AbstractMongoCrudRepository[E, T]) GetClient() *mongo.Client {
+func (impl *AbstractMongoCrudRepository[ID, E, T]) GetClient() *mongo.Client {
 	return impl.Client
 }
 
-func (impl *AbstractMongoCrudRepository[E, T]) GetDatabase() string {
+func (impl *AbstractMongoCrudRepository[ID, E, T]) GetDatabase() string {
 	return impl.Database
 }
 
-func (impl *AbstractMongoCrudRepository[E, T]) FindOne(ctx context.Context, filter interface{}) (E, error) {
+func (impl *AbstractMongoCrudRepository[ID, E, T]) FindOne(ctx context.Context, filter interface{}) (E, error) {
 	var (
 		entity     E
 		client     = impl.GetClient()
@@ -52,7 +58,7 @@ func (impl *AbstractMongoCrudRepository[E, T]) FindOne(ctx context.Context, filt
 	return entity, nil
 }
 
-func (impl *AbstractMongoCrudRepository[E, T]) FindMany(ctx context.Context, filter interface{}) (T, error) {
+func (impl *AbstractMongoCrudRepository[ID, E, T]) FindMany(ctx context.Context, filter interface{}) (T, error) {
 	var (
 		entity     E
 		entities   = make([]E, 0)
@@ -66,4 +72,61 @@ func (impl *AbstractMongoCrudRepository[E, T]) FindMany(ctx context.Context, fil
 	}
 
 	return entities, nil
+}
+
+func (impl *AbstractMongoCrudRepository[ID, E, T]) Create(ctx context.Context, entity E) (E, error) {
+	var (
+		client     = impl.GetClient()
+		collection = client.Database(impl.GetDatabase()).Collection(entity.CollectionName())
+		_, err     = collection.InsertOne(ctx, entity)
+	)
+
+	if err != nil {
+		return entity, errors.Wrapf(err, "failed to create in collection %s", entity.CollectionName())
+	}
+
+	return entity, nil
+}
+
+func (impl *AbstractMongoCrudRepository[ID, E, T]) Update(ctx context.Context, entity E, update interface{}) (E, error) {
+	var (
+		client     = impl.GetClient()
+		collection = client.Database(impl.GetDatabase()).Collection(entity.CollectionName())
+		_, err     = collection.UpdateOne(ctx, bson.D{{"_id", entity.GetID()}}, update)
+	)
+
+	if err != nil {
+		return entity, errors.Wrapf(err, "failed to update one in collection %s", entity.CollectionName())
+	}
+
+	return entity, nil
+}
+
+func (impl *AbstractMongoCrudRepository[ID, E, T]) Delete(ctx context.Context, entity E) (E, error) {
+	var (
+		client     = impl.GetClient()
+		collection = client.Database(impl.GetDatabase()).Collection(entity.CollectionName())
+		_, err     = collection.DeleteOne(ctx, bson.D{{"_id", entity.GetID()}})
+	)
+
+	if err != nil {
+		return entity, errors.Wrapf(err, "failed to delete in collection %s", entity.CollectionName())
+	}
+
+	return entity, nil
+}
+
+func (impl *AbstractMongoCrudRepository[ID, E, T]) DeleteMany(ctx context.Context, filter interface{}) (E, error) {
+	var (
+		entity     E
+		client     = impl.GetClient()
+		collection = client.Database(impl.GetDatabase()).Collection(entity.CollectionName())
+		_, err     = collection.DeleteMany(ctx, filter)
+	)
+
+	if err != nil {
+		return entity, errors.Wrapf(err, "failed to delete many in collection %s", entity.CollectionName())
+	}
+
+	return entity, nil
 }
