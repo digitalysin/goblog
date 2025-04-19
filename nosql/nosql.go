@@ -9,7 +9,7 @@ import (
 )
 
 type (
-	Entity[ID any | bson.ObjectID] interface {
+	Entity[ID any] interface {
 		CollectionName() string
 		GetID() ID
 	}
@@ -23,13 +23,13 @@ type (
 		DeleteMany(ctx context.Context, filter interface{}) error
 	}
 
-	MongoRepository[ID, E Entity[ID], T ~[]E] interface {
+	MongoRepository[ID any, E Entity[ID], T ~[]E] interface {
 		Repository[ID, E, T]
 		GetClient() *mongo.Client
 		GetDatabase() string
 	}
 
-	AbstractMongoCrudRepository[ID any | bson.ObjectID, E Entity[ID], T ~[]E] struct {
+	AbstractMongoCrudRepository[ID any, E Entity[ID], T ~[]E] struct {
 		Client   *mongo.Client
 		Database string
 	}
