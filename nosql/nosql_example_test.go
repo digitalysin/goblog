@@ -53,7 +53,7 @@ func TestNoSQL(t *testing.T) {
 		Name: "hello world the new airline",
 	}
 
-	updated, err := repo.Update(ctx, airline, bson.D{{
+	err = repo.Update(ctx, airline, bson.D{{
 		"$set", bson.D{{"code", "new updated code"}, {"name", "new updated name"}},
 	}})
 
@@ -61,7 +61,6 @@ func TestNoSQL(t *testing.T) {
 		log.Fatal(err)
 	}
 
-	log.Println(updated)
 }
 
 type (

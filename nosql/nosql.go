@@ -18,9 +18,9 @@ type (
 		FindOne(ctx context.Context, filter interface{}) (E, error)
 		FindMany(ctx context.Context, filter interface{}) (T, error)
 		Create(ctx context.Context, entity E) (E, error)
-		Update(ctx context.Context, e E, update interface{}) (E, error)
-		Delete(ctx context.Context, e E) (T, error)
-		DeleteMany(ctx context.Context, filter interface{}) (T, error)
+		Update(ctx context.Context, e E, update interface{}) error
+		Delete(ctx context.Context, e E) error
+		DeleteMany(ctx context.Context, filter interface{}) error
 	}
 
 	MongoRepository[ID, E Entity[ID], T ~[]E] interface {
@@ -88,7 +88,7 @@ func (impl *AbstractMongoCrudRepository[ID, E, T]) Create(ctx context.Context, e
 	return entity, nil
 }
 
-func (impl *AbstractMongoCrudRepository[ID, E, T]) Update(ctx context.Context, entity E, update interface{}) (E, error) {
+func (impl *AbstractMongoCrudRepository[ID, E, T]) Update(ctx context.Context, entity E, update interface{}) error {
 	var (
 		client     = impl.GetClient()
 		collection = client.Database(impl.GetDatabase()).Collection(entity.CollectionName())
@@ -96,13 +96,13 @@ func (impl *AbstractMongoCrudRepository[ID, E, T]) Update(ctx context.Context, e
 	)
 
 	if err != nil {
-		return entity, errors.Wrapf(err, "failed to update one in collection %s", entity.CollectionName())
+		return errors.Wrapf(err, "failed to update one in collection %s", entity.CollectionName())
 	}
 
-	return entity, nil
+	return nil
 }
 
-func (impl *AbstractMongoCrudRepository[ID, E, T]) Delete(ctx context.Context, entity E) (E, error) {
+func (impl *AbstractMongoCrudRepository[ID, E, T]) Delete(ctx context.Context, entity E) error {
 	var (
 		client     = impl.GetClient()
 		collection = client.Database(impl.GetDatabase()).Collection(entity.CollectionName())
@@ -110,13 +110,13 @@ func (impl *AbstractMongoCrudRepository[ID, E, T]) Delete(ctx context.Context, e
 	)
 
 	if err != nil {
-		return entity, errors.Wrapf(err, "failed to delete in collection %s", entity.CollectionName())
+		return errors.Wrapf(err, "failed to delete in collection %s", entity.CollectionName())
 	}
 
-	return entity, nil
+	return nil
 }
 
-func (impl *AbstractMongoCrudRepository[ID, E, T]) DeleteMany(ctx context.Context, filter interface{}) (E, error) {
+func (impl *AbstractMongoCrudRepository[ID, E, T]) DeleteMany(ctx context.Context, filter interface{}) error {
 	var (
 		entity     E
 		client     = impl.GetClient()
@@ -125,8 +125,8 @@ func (impl *AbstractMongoCrudRepository[ID, E, T]) DeleteMany(ctx context.Contex
 	)
 
 	if err != nil {
-		return entity, errors.Wrapf(err, "failed to delete many in collection %s", entity.CollectionName())
+		return errors.Wrapf(err, "failed to delete many in collection %s", entity.CollectionName())
 	}
 
-	return entity, nil
+	return nil
 }
