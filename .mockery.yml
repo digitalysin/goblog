@@ -20,6 +20,10 @@ packages:
     interfaces:
       Crypto:
 
+  github.com/digitalysin/goblog/db:
+    interfaces:
+      ORM:
+
   github.com/digitalysin/goblog/ftp:
     interfaces:
       Ftp:
