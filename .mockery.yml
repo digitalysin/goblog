@@ -36,6 +36,12 @@ packages:
     interfaces:
       Connection:
 
+  github.com/digitalysin/goblog/nosql:
+    interfaces:
+      Entity:
+      Repository:
+      MongoRepository:
+
   github.com/digitalysin/goblog/request:
     interfaces:
       WebClientFactory:
