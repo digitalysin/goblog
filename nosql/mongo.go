@@ -9,26 +9,6 @@ import (
 )
 
 type (
-	Entity[ID any] interface {
-		CollectionName() string
-		GetID() ID
-	}
-
-	Repository[ID any, E Entity[ID], T ~[]E] interface {
-		FindOne(ctx context.Context, filter interface{}) (E, error)
-		FindMany(ctx context.Context, filter interface{}) (T, error)
-		Create(ctx context.Context, entity E) (E, error)
-		Update(ctx context.Context, e E, update interface{}) error
-		Delete(ctx context.Context, e E) error
-		DeleteMany(ctx context.Context, filter interface{}) error
-	}
-
-	MongoRepository[ID any, E Entity[ID], T ~[]E] interface {
-		Repository[ID, E, T]
-		GetClient() *mongo.Client
-		GetDatabase() string
-	}
-
 	AbstractMongoCrudRepository[ID any, E Entity[ID], T ~[]E] struct {
 		Client   *mongo.Client
 		Database string

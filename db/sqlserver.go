@@ -1,10 +1,20 @@
 package db
 
 import (
+	glog "github.com/digitalysin/goblog/logger"
 	"gorm.io/driver/sqlserver"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 	"time"
+)
+
+type (
+	SqlServerOption struct {
+		ConnectionString                     string
+		MaxLifeTimeConnection                time.Duration
+		MaxIdleConnection, MaxOpenConnection int
+		Logger                               glog.Logger
+	}
 )
 
 func NewSqlServer(option *SqlServerOption) (ORM, error) {
