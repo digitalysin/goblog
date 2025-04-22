@@ -1,0 +1,46 @@
+all: false
+dir: '{{.InterfaceDir}}'
+filename: '{{ .InterfaceName | lower }}_mock.go'
+force-file-write: true
+formatter: goimports
+log-level: info
+structname: '{{.Mock}}{{.InterfaceName}}'
+pkgname: '{{.SrcPackageName}}'
+recursive: false
+require-template-schema-exists: true
+template: testify
+template-schema: '{{.Template}}.schema.json'
+
+packages:
+  github.com/digitalysin/goblog/cache:
+    interfaces:
+      Cache:
+
+  github.com/digitalysin/goblog/crypto:
+    interfaces:
+      Crypto:
+
+  github.com/digitalysin/goblog/ftp:
+    interfaces:
+      Ftp:
+
+  github.com/digitalysin/goblog/logger:
+    interfaces:
+      Logger:
+
+  github.com/digitalysin/goblog/nats:
+    interfaces:
+      Connection:
+
+  github.com/digitalysin/goblog/request:
+    interfaces:
+      WebClientFactory:
+      Client:
+
+  github.com/digitalysin/goblog/runner:
+    interfaces:
+      Runner:
+
+  github.com/digitalysin/goblog/telnet:
+    interfaces:
+      Telnet:
