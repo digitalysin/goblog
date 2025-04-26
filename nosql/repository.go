@@ -8,6 +8,7 @@ import (
 
 type (
 	Repository[ID any, E Entity[ID], T ~[]E] interface {
+		FindByID(ctx context.Context, id ID) (E, error)
 		FindOne(ctx context.Context, filter interface{}) (E, error)
 		FindMany(ctx context.Context, filter interface{}) (T, error)
 		Create(ctx context.Context, entity E) (E, error)

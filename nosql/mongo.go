@@ -23,6 +23,16 @@ func (impl *AbstractMongoCrudRepository[ID, E, T]) GetDatabase() string {
 	return impl.Database
 }
 
+func (impl *AbstractMongoCrudRepository[ID, E, T]) FindByID(ctx context.Context, id ID) (E, error) {
+	e, err := impl.FindOne(ctx, bson.D{{"_id", id}})
+
+	if err != nil {
+		return e, errors.Wrapf(err, "failed to find by id %s", id)
+	}
+
+	return e, nil
+}
+
 func (impl *AbstractMongoCrudRepository[ID, E, T]) FindOne(ctx context.Context, filter interface{}) (E, error) {
 	var (
 		entity     E

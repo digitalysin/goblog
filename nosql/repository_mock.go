@@ -186,6 +186,63 @@ func (_c *MockRepository_DeleteMany_Call[ID, E, T]) RunAndReturn(run func(ctx co
 	return _c
 }
 
+// FindByID provides a mock function for the type MockRepository
+func (_mock *MockRepository[ID, E, T]) FindByID(ctx context.Context, id ID) (E, error) {
+	ret := _mock.Called(ctx, id)
+
+	if len(ret) == 0 {
+		panic("no return value specified for FindByID")
+	}
+
+	var r0 E
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, ID) (E, error)); ok {
+		return returnFunc(ctx, id)
+	}
+	if returnFunc, ok := ret.Get(0).(func(context.Context, ID) E); ok {
+		r0 = returnFunc(ctx, id)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(E)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(context.Context, ID) error); ok {
+		r1 = returnFunc(ctx, id)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// MockRepository_FindByID_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'FindByID'
+type MockRepository_FindByID_Call[ID any, E Entity[ID], T ~[]E] struct {
+	*mock.Call
+}
+
+// FindByID is a helper method to define mock.On call
+//   - ctx
+//   - id
+func (_e *MockRepository_Expecter[ID, E, T]) FindByID(ctx interface{}, id interface{}) *MockRepository_FindByID_Call[ID, E, T] {
+	return &MockRepository_FindByID_Call[ID, E, T]{Call: _e.mock.On("FindByID", ctx, id)}
+}
+
+func (_c *MockRepository_FindByID_Call[ID, E, T]) Run(run func(ctx context.Context, id ID)) *MockRepository_FindByID_Call[ID, E, T] {
+	_c.Call.Run(func(args mock.Arguments) {
+		run(args[0].(context.Context), args[1].(ID))
+	})
+	return _c
+}
+
+func (_c *MockRepository_FindByID_Call[ID, E, T]) Return(v E, err error) *MockRepository_FindByID_Call[ID, E, T] {
+	_c.Call.Return(v, err)
+	return _c
+}
+
+func (_c *MockRepository_FindByID_Call[ID, E, T]) RunAndReturn(run func(ctx context.Context, id ID) (E, error)) *MockRepository_FindByID_Call[ID, E, T] {
+	_c.Call.Return(run)
+	return _c
+}
+
 // FindMany provides a mock function for the type MockRepository
 func (_mock *MockRepository[ID, E, T]) FindMany(ctx context.Context, filter interface{}) (T, error) {
 	ret := _mock.Called(ctx, filter)
