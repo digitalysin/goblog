@@ -44,6 +44,10 @@ func (lc *localcache) Decr(ctx context.Context, key string) error {
 	return errors.New("Decr not implemented for local mem cache")
 }
 
+func (lc *localcache) Del(_ context.Context, key string) error {
+	return lc.cache.Delete(key)
+}
+
 func (lc *localcache) Keys(_ context.Context, pattern string) ([]string, error) {
 	return nil, errors.New("Keys not implement for local mem cache")
 }

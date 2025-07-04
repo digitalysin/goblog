@@ -15,6 +15,7 @@ type (
 		GetBytes(ctx context.Context, key string) ([]byte, error)
 		Incr(ctx context.Context, key string) error
 		Decr(ctx context.Context, key string) error
+		Del(ctx context.Context, key string) error
 		Keys(ctx context.Context, pattern string) ([]string, error)
 		Ping(ctx context.Context) error
 		Close() error
@@ -72,6 +73,10 @@ func (c *cch) Incr(ctx context.Context, key string) error {
 
 func (c *cch) Decr(ctx context.Context, key string) error {
 	return c.cache.Decr(ctx, key).Err()
+}
+
+func (c *cch) Del(ctx context.Context, key string) error {
+	return c.cache.Del(ctx, key).Err()
 }
 
 func (c *cch) Keys(ctx context.Context, pattern string) ([]string, error) {
